@@ -1,6 +1,6 @@
 # lv
 
-Quick and dirty script to "calculate" the week in the academic year.
+Quick and dirty script to "calculate" the week in the academic year for Högskolan i Halmstad.
 
 ## Dependencies
 
