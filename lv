@@ -15,8 +15,8 @@ while getopts 'd:h' flag; do
 			echo "Get the week in the academic year"
 			echo ""
 			echo "  -d DATE    Get the week for DATE. Default is today."
-			echo "             See man date for more information."
-			echo "  -h         Display this help message"
+			echo "             Works like date's -d flag."
+			echo "  -h         Display this help message."
 			exit 0
 			;;
 
@@ -29,12 +29,13 @@ done
 # Get the week. Gets the current week if DATE is empty.
 WEEK=$(date $DATE "+%-V")
 
-# Fail if date fails.
+# Fail if date failed.
 if [ "$?" -ne "0" ]; then
 	echo "$0: invalid date specified"
 	exit 1
 fi
 
+# Horrible wall of ifs
 if [ "$WEEK" -eq 1 -o "$WEEK" -eq 14 -o "$WEEK" -eq 22  -o "$WEEK" -eq 33 ]; then
 	echo "OTV"
 elif [ "$WEEK" -eq 11 -o "$WEEK" -eq 21 -o "$WEEK" -eq 43 -o "$WEEK" -eq 2 ]; then
