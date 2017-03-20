@@ -1,9 +1,44 @@
 #!/bin/bash
 
-WEEK=$(date "+%-V")
+# Variables
+DATE="" # Default date is today
+
+# Get command line arguments
+while getopts 'd:h' flag; do
+	case "${flag}" in
+		# Make a string with "-d" and our date.
+		# This is later used when calling date.
+		d) DATE="-d ${OPTARG}" ;;
+
+		# Help text
+		h)  echo "Usage: $0 [OPTION]"
+			echo "Get the week in the academic year"
+			echo ""
+			echo "  -d DATE    Get the week for DATE. Default is today."
+			echo "             See man date for more information."
+			echo "  -h         Display this help message"
+			exit 0
+			;;
+
+		# Just exit on unexpected options.
+		# getopts prints a nice error message.
+		*) exit 1 ;;
+	esac
+done
+
+# Get the week. Gets the current week if DATE is empty.
+WEEK=$(date $DATE "+%-V")
+
+# Fail if date fails.
+if [ "$?" -ne "0" ]; then
+	echo "$0: invalid date specified"
+	exit 1
+fi
 
 if [ "$WEEK" -eq 1 -o "$WEEK" -eq 14 -o "$WEEK" -eq 22  -o "$WEEK" -eq 33 ]; then
 	echo "OTV"
+elif [ "$WEEK" -eq 11 -o "$WEEK" -eq 21 -o "$WEEK" -eq 43 -o "$WEEK" -eq 2 ]; then
+	echo "TV"
 elif [ "$WEEK" -ge 3 -a "$WEEK" -le 10 ]; then
 	echo "LV$(( "$WEEK" - 2 ))"
 elif [ "$WEEK" -ge 12 -a "$WEEK" -le 13 ]; then
@@ -14,8 +49,6 @@ elif [ "$WEEK" -ge 35 -a "$WEEK" -le 42 ]; then
 	echo "LV$(( "$WEEK" - 34 ))"
 elif [ "$WEEK" -ge 44 -a "$WEEK" -le 51 ]; then
 	echo "LV$(( "$WEEK" - 43 ))"
-elif [ "$WEEK" -eq 11 -o "$WEEK" -eq 21 -o "$WEEK" -eq 43 -o "$WEEK" -eq 2 ]; then
-	echo "TV"
 else
 	echo "V$WEEK"
 fi

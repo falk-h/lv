@@ -1,6 +1,6 @@
 # lv
 
-Quick and dirty script to "calculate" the week in the academic year for Högskolan i Halmstad.
+Quick and dirty script to "calculate" the week in the academic year for some swedish universities.
 
 ## Dependencies
 
@@ -14,7 +14,10 @@ Quick and dirty script to "calculate" the week in the academic year for Högskol
 
 ## Usage
 
-	lv
+	lv [OPTION]
+
+	-d DATE    Get the week for DATE. Default is today.
+	-h         Display this help message
 
 ## Output
 
