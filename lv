@@ -26,29 +26,27 @@ while getopts 'd:h' flag; do
 	esac
 done
 
-# Get the week. Get the current week if DATE is empty, otherwise
-# get the specified week. Redirect errors to /dev/null, and handle
-# error output ourselves.
+# Get the current week if DATE is empty, otherwise get the specified week.
+# Redirect errors to /dev/null, and handle error output ourselves.
 if [[ -z $DATE ]]; then
-    WEEK=$(date "+%-V" 2> /dev/null)
+    if ! WEEK=$(date "+%-V" 2> /dev/null); then
+        echo "$0: Something went wrong with date"
+        exit 1
+    fi
 else
-    WEEK=$(date "$DATE" "+%-V" 2> /dev/null)
+    if ! WEEK=$(date "$DATE" "+%-V" 2> /dev/null); then
+        echo "$0: invalid date '${DATE:3}'"
+        exit 1
+    fi
 fi
 
-# Fail if date failed, and output the date.
-if (( $? != 0 )); then
-	echo "$0: invalid date '${DATE:3}'"
-    echo "DATE = $DATE"
-	exit 1
-fi
 
 # Horrible wall of ifs.
-# First checks if our week is a reexamination week, checks if it's
-# an examination week, checks if it's a teaching week, and calculates
-# which one it is with an offset, and finally just outputs the week's
-# number if it doesn't fall in any of the above categories.
-# Study period 4 is in there twice because it has a reexamination week
-# in the middle.
+# First checks if our week is a reexamination week, checks if it's an
+# examination week, checks if it's a teaching week, and calculates which one it
+# is with an offset, and finally just outputs the week's number if it doesn't
+# fall in any of the above categories. Study period 4 is in there twice because
+# it has a reexamination week in the middle.
 if (( WEEK == 1 || WEEK == 14 || WEEK == 22  || WEEK == 33 )); then
     # Reexamination week.
 	echo "OTV"
