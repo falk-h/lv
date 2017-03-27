@@ -49,27 +49,27 @@ fi
 # number if it doesn't fall in any of the above categories.
 # Study period 4 is in there twice because it has a reexamination week
 # in the middle.
-if (( $WEEK == 1 || $WEEK == 14 || $WEEK == 22  || $WEEK == 33 )); then
+if (( WEEK == 1 || WEEK == 14 || WEEK == 22  || WEEK == 33 )); then
     # Reexamination week.
 	echo "OTV"
-elif (( $WEEK == 11 || $WEEK == 21 || $WEEK == 43 || $WEEK == 2 )); then
+elif (( WEEK == 11 || WEEK == 21 || WEEK == 43 || WEEK == 2 )); then
     # Examination week.
 	echo "TV"
-elif (( $WEEK >= 35 && $WEEK <= 42 )); then
+elif (( WEEK >= 35 && WEEK <= 42 )); then
     # Study period 1
-	echo "LV$(( "$WEEK" - 34 ))"
-elif (( $WEEK >= 44 && $WEEK <= 51 )); then
+	echo "LV$(( WEEK - 34 ))"
+elif (( WEEK >= 44 && WEEK <= 51 )); then
     # Study period 2
-	echo "LV$(( "$WEEK" - 43 ))"
-elif (( $WEEK >= 3 && $WEEK <= 10 )); then
+	echo "LV$(( WEEK - 43 ))"
+elif (( WEEK >= 3 && WEEK <= 10 )); then
     # Study period 3
-	echo "LV$(( "$WEEK" - 2 ))"
-elif (( $WEEK >= 12 && $WEEK <= 13 )); then
+	echo "LV$(( WEEK - 2 ))"
+elif (( WEEK >= 12 && WEEK <= 13 )); then
     # Study period 4
-	echo "LV$(( "$WEEK" - 11 ))"
-elif (( $WEEK >= 15 && $WEEK <= 20 )); then
+	echo "LV$(( WEEK - 11 ))"
+elif (( WEEK >= 15 && WEEK <= 20 )); then
     # Study period 4
-	echo "LV$(( "$WEEK" - 12 ))"
+	echo "LV$(( WEEK - 12 ))"
 else
     # Week not in the academic year.
 	echo "V$WEEK"
