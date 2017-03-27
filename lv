@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Variables
-DATE="" # Default date is today
+DATE="" # Default to empty
 
 # Get command line arguments
 while getopts 'd:h' flag; do
@@ -26,30 +26,53 @@ while getopts 'd:h' flag; do
 	esac
 done
 
-# Get the week. Gets the current week if DATE is empty.
-WEEK=$(date $DATE "+%-V")
+# Get the week. Get the current week if DATE is empty, otherwise
+# get the specified week. Redirect errors to /dev/null, and handle
+# error output ourselves.
+if [[ -z $DATE ]]; then
+    WEEK=$(date "+%-V" 2> /dev/null)
+else
+    WEEK=$(date "$DATE" "+%-V" 2> /dev/null)
+fi
 
-# Fail if date failed.
-if [ "$?" -ne "0" ]; then
-	echo "$0: invalid date specified"
+# Fail if date failed, and output the date.
+if (( $? != 0 )); then
+	echo "$0: invalid date '${DATE:3}'"
+    echo "DATE = $DATE"
 	exit 1
 fi
 
-# Horrible wall of ifs
-if [ "$WEEK" -eq 1 -o "$WEEK" -eq 14 -o "$WEEK" -eq 22  -o "$WEEK" -eq 33 ]; then
+# Horrible wall of ifs.
+# First checks if our week is a reexamination week, checks if it's
+# an examination week, checks if it's a teaching week, and calculates
+# which one it is with an offset, and finally just outputs the week's
+# number if it doesn't fall in any of the above categories.
+# Study period 4 is in there twice because it has a reexamination week
+# in the middle.
+if (( $WEEK == 1 || $WEEK == 14 || $WEEK == 22  || $WEEK == 33 )); then
+    # Reexamination week.
 	echo "OTV"
-elif [ "$WEEK" -eq 11 -o "$WEEK" -eq 21 -o "$WEEK" -eq 43 -o "$WEEK" -eq 2 ]; then
+elif (( $WEEK == 11 || $WEEK == 21 || $WEEK == 43 || $WEEK == 2 )); then
+    # Examination week.
 	echo "TV"
-elif [ "$WEEK" -ge 3 -a "$WEEK" -le 10 ]; then
-	echo "LV$(( "$WEEK" - 2 ))"
-elif [ "$WEEK" -ge 12 -a "$WEEK" -le 13 ]; then
-	echo "LV$(( "$WEEK" - 11 ))"
-elif [ "$WEEK" -ge 15 -a "$WEEK" -le 20 ]; then
-	echo "LV$(( "$WEEK" - 12 ))"
-elif [ "$WEEK" -ge 35 -a "$WEEK" -le 42 ]; then
+elif (( $WEEK >= 35 && $WEEK <= 42 )); then
+    # Study period 1
 	echo "LV$(( "$WEEK" - 34 ))"
-elif [ "$WEEK" -ge 44 -a "$WEEK" -le 51 ]; then
+elif (( $WEEK >= 44 && $WEEK <= 51 )); then
+    # Study period 2
 	echo "LV$(( "$WEEK" - 43 ))"
+elif (( $WEEK >= 3 && $WEEK <= 10 )); then
+    # Study period 3
+	echo "LV$(( "$WEEK" - 2 ))"
+elif (( $WEEK >= 12 && $WEEK <= 13 )); then
+    # Study period 4
+	echo "LV$(( "$WEEK" - 11 ))"
+elif (( $WEEK >= 15 && $WEEK <= 20 )); then
+    # Study period 4
+	echo "LV$(( "$WEEK" - 12 ))"
 else
+    # Week not in the academic year.
 	echo "V$WEEK"
 fi
+
+exit
